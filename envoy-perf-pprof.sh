@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 ENVOY_VERSION=$1
 FILE="$(cd "$(dirname "$2")" && pwd -P)/$(basename "$2")"
 [ -z "$ENVOY_VERSION" ] || [ -z "$FILE" ] && echo "usage: ./envoy-perf-pprof.sh <envoy-version> <perf-record-file>" && exit 1
