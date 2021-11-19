@@ -1,12 +1,13 @@
 ARG ENVOY_VERSION
 FROM envoyproxy/envoy-debug:$ENVOY_VERSION AS envoy
 
-FROM ubuntu:18.04 AS perf_data_converter
+FROM ubuntu:20.04 AS perf_data_converter
 
-RUN apt update && apt install -y npm g++ git libelf-dev libcap-dev
+RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y npm g++ git libelf-dev libcap-dev
 RUN npm install -g @bazel/bazelisk
 
-RUN git clone https://github.com/google/perf_data_converter.git /usr/src/perf_data_converter
+#RUN git clone https://github.com/google/perf_data_converter.git /usr/src/perf_data_converter
+RUN git clone https://github.com/EricMountain/perf_data_converter.git -b pin-protobuf /usr/src/perf_data_converter
 WORKDIR /usr/src/perf_data_converter
 
 RUN bazel build src:perf_to_profile
