@@ -34,3 +34,17 @@ RUN go get -u github.com/google/pprof
 ENV PATH=${PATH}:/root/go/bin
 
 ENTRYPOINT ["pprof", "-http=0.0.0.0:8888", "/usr/local/bin/envoy"]
+
+RUN apt install -y ubuntu-dbgsym-keyring
+RUN echo "deb http://ddebs.ubuntu.com $(lsb_release -cs) main restricted universe multiverse" >> /etc/apt/sources.list.d/ddebs.list && \
+    echo "deb http://ddebs.ubuntu.com $(lsb_release -cs)-updates main restricted universe multiverse" >> /etc/apt/sources.list.d/ddebs.list && \
+    echo "deb http://ddebs.ubuntu.com $(lsb_release -cs)-proposed main restricted universe multiverse" >> /etc/apt/sources.list.d/ddebs.list
+
+RUN apt update && \
+    apt install -y linux-image-5.8.0-1041-aws-dbgsym
+
+# Based on https://github.com/google/perf_data_converter/issues/36#issuecomment-396161294
+RUN mkdir -p /root/pprof/binaries/30eb891c8f0beca57e6153f78261859f2c2367c2
+RUN ln -s /usr/lib/debug/boot/vmlinux-5.8.0-1041-aws /root/pprof/binaries/30eb891c8f0beca57e6153f78261859f2c2367c2/vmlinux
+
+#RUN apt-get install -y libc6-dbg=2.27-3ubuntu1.4
