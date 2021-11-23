@@ -48,4 +48,7 @@ RUN apt update && \
 RUN mkdir -p /root/pprof/binaries/ab97acb15aa4ad010bb4a0b66eac96ffb4742f09
 RUN ln -s /usr/lib/debug/boot/vmlinux-5.8.0-1041-aws /root/pprof/binaries/ab97acb15aa4ad010bb4a0b66eac96ffb4742f09/vmlinux
 
+RUN mkdir -p /root/pprof/binaries/4fc029208eb7c09905d7d821909b1ab6a9a25342
+RUN ln -s /usr/lib/debug/boot/vmlinux-5.11.0-1021-aws /root/pprof/binaries/4fc029208eb7c09905d7d821909b1ab6a9a25342/vmlinux
+
 #RUN apt-get install -y libc6-dbg=2.27-3ubuntu1.4
