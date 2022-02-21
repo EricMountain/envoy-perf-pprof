@@ -52,3 +52,6 @@ RUN mkdir -p /root/pprof/binaries/4fc029208eb7c09905d7d821909b1ab6a9a25342
 RUN ln -s /usr/lib/debug/boot/vmlinux-5.11.0-1021-aws /root/pprof/binaries/4fc029208eb7c09905d7d821909b1ab6a9a25342/vmlinux
 
 #RUN apt-get install -y libc6-dbg=2.27-3ubuntu1.4
+
+# 2022-02-21 - Add syms for kernel 5.11.0-1022
+RUN apt install -y linux-image-5.11.0-1022-aws-dbgsym
