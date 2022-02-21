@@ -26,10 +26,10 @@ COPY --from=envoy /usr/local/bin/envoy /usr/local/bin/envoy
 RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt install -y graphviz \
       libelf-dev \
-#      golang-1.16 \
       golang \
       git \
-      linux-tools-aws linux-tools-5.8.0-1041-aws linux-image-5.8.0-1041-aws linux-headers-5.8.0-1041-aws linux-modules-5.8.0-1041-aws
+      #linux-tools-5.8.0-1041-aws linux-image-5.8.0-1041-aws linux-headers-5.8.0-1041-aws linux-modules-5.8.0-1041-aws \
+      linux-tools-aws
 RUN go get -u github.com/google/pprof
 
 ENV PATH=${PATH}:/root/go/bin
@@ -41,17 +41,16 @@ RUN echo "deb http://ddebs.ubuntu.com $(lsb_release -cs) main restricted univers
     echo "deb http://ddebs.ubuntu.com $(lsb_release -cs)-updates main restricted universe multiverse" >> /etc/apt/sources.list.d/ddebs.list && \
     echo "deb http://ddebs.ubuntu.com $(lsb_release -cs)-proposed main restricted universe multiverse" >> /etc/apt/sources.list.d/ddebs.list
 
-RUN apt update && \
-    apt install -y linux-image-5.8.0-1041-aws-dbgsym linux-image-5.11.0-1021-aws-dbgsym
+#RUN apt update && \
+#    apt install -y linux-image-5.8.0-1041-aws-dbgsym linux-image-5.11.0-1021-aws-dbgsym
+
+RUN apt install -y linux-image-5.11.0-1022-aws-dbgsym
 
 # Based on https://github.com/google/perf_data_converter/issues/36#issuecomment-396161294
-RUN mkdir -p /root/pprof/binaries/ab97acb15aa4ad010bb4a0b66eac96ffb4742f09
-RUN ln -s /usr/lib/debug/boot/vmlinux-5.8.0-1041-aws /root/pprof/binaries/ab97acb15aa4ad010bb4a0b66eac96ffb4742f09/vmlinux
-
-RUN mkdir -p /root/pprof/binaries/4fc029208eb7c09905d7d821909b1ab6a9a25342
-RUN ln -s /usr/lib/debug/boot/vmlinux-5.11.0-1021-aws /root/pprof/binaries/4fc029208eb7c09905d7d821909b1ab6a9a25342/vmlinux
+#RUN mkdir -p /root/pprof/binaries/ab97acb15aa4ad010bb4a0b66eac96ffb4742f09
+#RUN ln -s /usr/lib/debug/boot/vmlinux-5.8.0-1041-aws /root/pprof/binaries/ab97acb15aa4ad010bb4a0b66eac96ffb4742f09/vmlinux
+#
+#RUN mkdir -p /root/pprof/binaries/4fc029208eb7c09905d7d821909b1ab6a9a25342
+#RUN ln -s /usr/lib/debug/boot/vmlinux-5.11.0-1021-aws /root/pprof/binaries/4fc029208eb7c09905d7d821909b1ab6a9a25342/vmlinux
 
 #RUN apt-get install -y libc6-dbg=2.27-3ubuntu1.4
-
-# 2022-02-21 - Add syms for kernel 5.11.0-1022
-RUN apt install -y linux-image-5.11.0-1022-aws-dbgsym
