@@ -1,7 +1,7 @@
 ARG ENVOY_VERSION
 FROM envoyproxy/envoy-debug:$ENVOY_VERSION AS envoy
 
-# build step for perf_to_profile fails on arm64
+# build step for perf_to_profile fails on arm64, so the scripts will use the amd64 image to do the conversion
 #FROM ubuntu:20.04 AS perf_data_converter
 #
 #RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y npm g++ git libelf-dev libcap-dev
@@ -43,9 +43,7 @@ RUN echo "deb http://ddebs.ubuntu.com $(lsb_release -cs) main restricted univers
 
 #RUN apt update && \
 #    apt install -y linux-image-5.8.0-1041-aws-dbgsym linux-image-5.11.0-1021-aws-dbgsym
-
-RUN apt install -y linux-image-5.11.0-1022-aws-dbgsym
-
+#
 # Based on https://github.com/google/perf_data_converter/issues/36#issuecomment-396161294
 #RUN mkdir -p /root/pprof/binaries/ab97acb15aa4ad010bb4a0b66eac96ffb4742f09
 #RUN ln -s /usr/lib/debug/boot/vmlinux-5.8.0-1041-aws /root/pprof/binaries/ab97acb15aa4ad010bb4a0b66eac96ffb4742f09/vmlinux
@@ -53,4 +51,12 @@ RUN apt install -y linux-image-5.11.0-1022-aws-dbgsym
 #RUN mkdir -p /root/pprof/binaries/4fc029208eb7c09905d7d821909b1ab6a9a25342
 #RUN ln -s /usr/lib/debug/boot/vmlinux-5.11.0-1021-aws /root/pprof/binaries/4fc029208eb7c09905d7d821909b1ab6a9a25342/vmlinux
 
+RUN apt update && \
+    apt install -y linux-image-5.11.0-1022-aws-dbgsym
+
+RUN mkdir -p /root/pprof/binaries/5097c1d9a7d4e106af27b40509743c7b0ce6df9e
+RUN ln -s /usr/lib/debug/boot/vmlinux-5.11.0-1022-aws /root/pprof/binaries/5097c1d9a7d4e106af27b40509743c7b0ce6df9e/vmlinux
+
 #RUN apt-get install -y libc6-dbg=2.27-3ubuntu1.4
+
+RUN apt update && apt install -y linux-tools-5.11.0-1022-aws linux-image-5.11.0-1022-aws linux-headers-5.11.0-1022-aws linux-modules-5.11.0-1022-aws

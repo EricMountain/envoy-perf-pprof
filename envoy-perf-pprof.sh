@@ -17,14 +17,14 @@ if [[ ${ARCH} != "amd64" ]] ; then
   docker build --platform linux/${ARCH} -t envoy-perf-pprof-${ARCH}-${ENVOY_VERSION} --build-arg ENVOY_VERSION=$ENVOY_VERSION -f ${ARCH}.Dockerfile .
 
   # Prepare output file for mounting into container
-  touch $FILE.pprof
+  touch "${FILE}.pprof"
 
-  docker run --platform linux/amd64 --rm --entrypoint /usr/bin/perf_to_profile -v $FILE:/root/envoy.perf -v $FILE.pprof:/root/envoy.pprof envoy-perf-pprof-amd64-${ENVOY_VERSION} \
+  docker run --platform linux/amd64 --rm --entrypoint /usr/bin/perf_to_profile -v $FILE:/root/envoy.perf:ro -v $FILE.pprof:/root/envoy.pprof envoy-perf-pprof-amd64-${ENVOY_VERSION} \
     -i /root/envoy.perf \
     -o /root/envoy.pprof \
     -f
 
-  docker run --platform linux/${ARCH} --rm -p ${PORT}:8888 -v $FILE.pprof:/root/envoy.pprof envoy-perf-pprof-${ARCH}-${ENVOY_VERSION} /root/envoy.pprof
+  docker run --platform linux/${ARCH} --rm -p ${PORT}:8888 -v $FILE.pprof:/root/envoy.pprof:ro envoy-perf-pprof-${ARCH}-${ENVOY_VERSION} /root/envoy.pprof
 else
-  docker run --platform linux/${ARCH} --rm -p ${PORT}:8888 -v $FILE:/root/envoy.perf envoy-perf-pprof-${ARCH}-${ENVOY_VERSION} /root/envoy.perf
+  docker run --platform linux/${ARCH} --rm -p ${PORT}:8888 -v $FILE:/root/envoy.perf:ro envoy-perf-pprof-${ARCH}-${ENVOY_VERSION} /root/envoy.perf
 fi
