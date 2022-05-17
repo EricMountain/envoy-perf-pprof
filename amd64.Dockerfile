@@ -25,15 +25,20 @@ COPY --from=envoy /usr/local/bin/envoy /usr/local/bin/envoy
 RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt install -y graphviz \
       libelf-dev \
-#      golang-1.16 \
-      golang \
       git \
-      linux-tools-aws linux-tools-5.8.0-1041-aws linux-image-5.8.0-1041-aws linux-headers-5.8.0-1041-aws linux-modules-5.8.0-1041-aws
-RUN go get -u github.com/google/pprof
+      linux-tools-aws \
+      software-properties-common
+
+# We need go 1.18 for pprof
+RUN add-apt-repository ppa:longsleep/golang-backports \
+    && apt update \
+    && apt install -y golang-go
 
 ENV PATH=${PATH}:/root/go/bin
-
+RUN go install github.com/google/pprof@latest
 ENTRYPOINT ["pprof", "-http=0.0.0.0:8888", "/usr/local/bin/envoy"]
+
+# Kernel debug symbol linking based on https://github.com/google/perf_data_converter/issues/36#issuecomment-396161294
 
 RUN apt install -y ubuntu-dbgsym-keyring
 RUN echo "deb http://ddebs.ubuntu.com $(lsb_release -cs) main restricted universe multiverse" >> /etc/apt/sources.list.d/ddebs.list && \
@@ -41,10 +46,12 @@ RUN echo "deb http://ddebs.ubuntu.com $(lsb_release -cs) main restricted univers
     echo "deb http://ddebs.ubuntu.com $(lsb_release -cs)-proposed main restricted universe multiverse" >> /etc/apt/sources.list.d/ddebs.list
 
 RUN apt update && \
-    apt install -y linux-image-5.8.0-1041-aws-dbgsym
+    apt install -y linux-image-5.13.0-1017-aws-dbgsym
 
-# Based on https://github.com/google/perf_data_converter/issues/36#issuecomment-396161294
-RUN mkdir -p /root/pprof/binaries/30eb891c8f0beca57e6153f78261859f2c2367c2
-RUN ln -s /usr/lib/debug/boot/vmlinux-5.8.0-1041-aws /root/pprof/binaries/30eb891c8f0beca57e6153f78261859f2c2367c2/vmlinux
+RUN mkdir -p /root/pprof/binaries/5097c1d9a7d4e106af27b40509743c7b0ce6df9e
+RUN ln -s /usr/lib/debug/boot/vmlinux-5.13.0-1017-aws /root/pprof/binaries/5097c1d9a7d4e106af27b40509743c7b0ce6df9e/vmlinux
 
-#RUN apt-get install -y libc6-dbg=2.27-3ubuntu1.4
+RUN apt update && apt install -y linux-tools-5.13.0-1017-aws linux-image-5.13.0-1017-aws linux-headers-5.13.0-1017-aws linux-modules-5.13.0-1017-aws
+
+# Gets ignored if it's the wrong version?
+RUN apt-get install -y libc6-dbg

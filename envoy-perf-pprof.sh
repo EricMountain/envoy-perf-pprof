@@ -11,10 +11,11 @@ PORT=${4:-8888}
 
 # We will need this image regardless as we will use it to convert the perf file to pprof format in the non-amd64 case
 # Assume already built
-#docker build --platform linux/amd64 -t envoy-perf-pprof-amd64-${ENVOY_VERSION} --build-arg ENVOY_VERSION=$ENVOY_VERSION -f amd64.Dockerfile .
+docker build --platform linux/amd64 -t envoy-perf-pprof-amd64-${ENVOY_VERSION} --build-arg ENVOY_VERSION=$ENVOY_VERSION -f amd64.Dockerfile .
 
 if [[ ${ARCH} != "amd64" ]] ; then
-  docker build --platform linux/${ARCH} -t envoy-perf-pprof-${ARCH}-${ENVOY_VERSION} --build-arg ENVOY_VERSION=$ENVOY_VERSION -f ${ARCH}.Dockerfile .
+  # Built
+  #docker build --platform linux/${ARCH} -t envoy-perf-pprof-${ARCH}-${ENVOY_VERSION} --build-arg ENVOY_VERSION=$ENVOY_VERSION -f ${ARCH}.Dockerfile .
 
   # Prepare output file for mounting into container
   touch "${FILE}.pprof"
